@@ -3,6 +3,7 @@ require 'active_support/inflector'
 
 class Song
 
+
   def self.table_name
     self.to_s.downcase.pluralize
   end
@@ -20,6 +21,12 @@ class Song
     column_names.compact
   end
 
+  #creates all the available attributes for the class
+  self.column_names.each do |col_name|
+    attr_accessor col_name.to_sym
+  end
+  
+  #sends the new instance's data to the respective attributes based off of previous method
   def initialize(options={})
     options.each do |property, value|
       self.send("#{property}=", value)
@@ -48,13 +55,10 @@ class Song
     self.class.column_names.delete_if {|col| col == "id"}.join(", ")
   end
 
-def self.find_by_name(name)
-  sql = "SELECT * FROM #{self.table_name} WHERE name = '?'"
-  DB[:conn].execute(sql, name)
-end
-
-
-
+  def self.find_by_name(name)
+    sql = "SELECT * FROM #{self.table_name} WHERE name = '#{name}'"
+    DB[:conn].execute(sql)
+  end
 
 end
 
